@@ -221,17 +221,62 @@ html, body {
 </div>
 
 <script>
-let x = 0;
-let startX = 0;
-const world = document.getElementById("world");
 
-document.addEventListener("touchstart", e => startX = e.touches[0].clientX);
-document.addEventListener("touchmove", e => {
-  const dx = e.touches[0].clientX - startX;
-  x = Math.max(-1100, Math.min(0, x + dx * 0.04));
-  world.style.transform = `translateX(${x}vw)`;
-  startX = e.touches[0].clientX;
+
+  const world = document.getElementById("world");
+
+let position = 0;        // current position (vw)
+let velocity = 0;        // movement speed
+let lastX = 0;
+let isTouching = false;
+
+const MIN_X = -1100;     // left bound (adjust if you add panels)
+const MAX_X = 0;         // right bound
+const FRICTION = 0.92;   // how quickly it slows (closer to 1 = longer glide)
+
+document.addEventListener("touchstart", e => {
+  isTouching = true;
+  lastX = e.touches[0].clientX;
+  velocity = 0;
 });
+
+document.addEventListener("touchmove", e => {
+  if (!isTouching) return;
+
+  const currentX = e.touches[0].clientX;
+  const dx = currentX - lastX;
+
+  velocity = dx * 0.06;          // walking sensitivity
+  position += velocity;
+
+  lastX = currentX;
+});
+
+document.addEventListener("touchend", () => {
+  isTouching = false;
+});
+
+function animate() {
+  if (!isTouching) {
+    position += velocity;
+    velocity *= FRICTION;
+  }
+
+  // Soft bounds
+  if (position > MAX_X) {
+    position += (MAX_X - position) * 0.08;
+    velocity = 0;
+  }
+  if (position < MIN_X) {
+    position += (MIN_X - position) * 0.08;
+    velocity = 0;
+  }
+
+  world.style.transform = `translateX(${position}vw)`;
+  requestAnimationFrame(animate);
+}
+
+animate();
 
 /* Gift open */
 document.getElementById("endGift").onclick = () => {

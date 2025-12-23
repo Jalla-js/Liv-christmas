@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🎄</title>
+
+<style>
+/* =====================
+   BASE
+===================== */
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* =====================
+   INTRO
+===================== */
+.intro {
+  position: fixed;
+  inset: 0;
+  background: #9CAF9A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.gift-wrap {
+  animation: breathe 6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
+.gift {
+  width: 220px;
+  height: 220px;
+  background: #F3F6F2;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+  position: relative;
+  cursor: pointer;
+}
+
+/* Lid */
+.lid {
+  position: absolute;
+  inset: 0;
+  background: #F3F6F2;
+  border-radius: 18px;
+  transform-origin: bottom center;
+  transition: transform 0.4s ease;
+  z-index: 2;
+}
+
+.lid.pop {
+  transform: translateY(-14px) rotateX(12deg);
+}
+
+/* Ribbon */
+.ribbon-v, .ribbon-h {
+  position: absolute;
+  background: #7F9C88;
+  z-index: 3;
+}
+.ribbon-v {
+  width: 28px;
+  height: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.ribbon-h {
+  height: 28px;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Bow */
+.bow {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 30px;
+  background: #7F9C88;
+  border-radius: 50%;
+  z-index: 4;
+}
+
+/* Gift text */
+.gift-text {
+  position: absolute;
+  bottom: 22px;
+  width: 100%;
+  text-align: center;
+  color: #4F6653;
+  z-index: 4;
+}
+.gift-text strong {
+  display: block;
+  font-size: 1.1rem;
+}
+.gift-text span {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* =====================
+   SCENE
+===================== */
+.scene {
+  position: fixed;
+  inset: -10%;
+  background-image: url("https://i.ibb.co/hFnYy3K9/45-EDA4-EF-123-D-443-D-8-D96-D81160758-FEF.png");
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.15);
+  animation: drift 20s ease-in-out infinite;
+
+  clip-path: circle(0% at 50% 50%);
+  -webkit-clip-path: circle(0% at 50% 50%);
+  transition: clip-path 2s ease, -webkit-clip-path 2s ease;
+}
+
+@keyframes drift {
+  0% { transform: scale(1.15) translate(0,0); }
+  50% { transform: scale(1.18) translate(-12px,-10px); }
+  100% { transform: scale(1.15) translate(0,0); }
+}
+
+/* =====================
+   TEXT LINES
+===================== */
+.line {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 20%;
+  text-align: center;
+  color: white;
+  font-size: 1.3rem;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  text-shadow: 0 8px 22px rgba(0,0,0,0.6);
+}
+.line.show {
+  opacity: 1;
+}
+
+/* =====================
+   SNOW
+===================== */
+.snow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.snow span {
+  position: absolute;
+  top: -10px;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.25;
+  animation: fall linear infinite;
+}
+@keyframes fall {
+  to {
+    transform: translateY(110vh);
+  }
+}
+
+/* =====================
+   GIFT TAG
+===================== */
+.gift-tag {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  background: #F6F3EE;
+  color: #4F6653;
+  padding: 28px 26px 32px;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.5s ease, transform 1.5s ease;
+  text-align: center;
+  max-width: 280px;
+  z-index: 5;
+}
+.gift-tag.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+.close-tag {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  border: none;
+  background: none;
+  font-size: 1.3rem;
+  color: #8A9E8E;
+}
+
+/* =====================
+   HIDDEN
+===================== */
+.hidden {
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="scene" id="scene"></div>
+
+<div class="intro" id="intro">
+  <div class="gift-wrap">
+    <div class="gift" id="gift">
+      <div class="lid" id="lid"></div>
+      <div class="bow"></div>
+      <div class="ribbon-v"></div>
+      <div class="ribbon-h"></div>
+      <div class="gift-text">
+        <strong>For you</strong>
+        <span>Tap to open</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="line" id="line1">I didn’t realise how much I’d miss you.</div>
+<div class="line" id="line2">Until we weren’t together.</div>
+<div class="line" id="line3">I keep wishing you were here.</div>
+
+<div class="snow" id="snow"></div>
+
+<div class="gift-tag" id="giftTag">
+  <button class="close-tag" id="closeTag">×</button>
+  <p>
+    Merry Christmas, darling<br>
+    <strong>I love you</strong>
+  </p>
+</div>
+
+<script>
+const gift = document.getElementById("gift");
+const lid = document.getElementById("lid");
+const intro = document.getElementById("intro");
+const scene = document.getElementById("scene");
+
+gift.onclick = () => {
+  lid.classList.add("pop");
+
+  setTimeout(() => {
+    intro.style.opacity = "0";
+    scene.style.clipPath = "circle(150% at 50% 50%)";
+  }, 400);
+
+  setTimeout(() => {
+    intro.remove();
+    document.getElementById("line1").classList.add("show");
+  }, 3000);
+
+  setTimeout(() => {
+    document.getElementById("line2").classList.add("show");
+  }, 5500);
+
+  setTimeout(() => {
+    document.getElementById("line3").classList.add("show");
+  }, 8000);
+
+  setTimeout(() => {
+    document.getElementById("giftTag").classList.add("show");
+  }, 11500);
+
+  createSnow();
+};
+
+document.getElementById("closeTag").onclick = () => {
+  document.getElementById("giftTag").classList.remove("show");
+};
+
+function createSnow() {
+  const snow = document.getElementById("snow");
+  for (let i = 0; i < 40; i++) {
+    const flake = document.createElement("span");
+    flake.style.left = Math.random() * 100 + "vw";
+    flake.style.animationDuration = 8 + Math.random() * 10 + "s";
+    flake.style.animationDelay = Math.random() * 5 + "s";
+    snow.appendChild(flake);
+  }
+}
+</script>
+
+</body>
+</html>

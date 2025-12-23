@@ -6,9 +6,6 @@
 <title>🎄</title>
 
 <style>
-/* =====================
-   BASE
-===================== */
 html, body {
   margin: 0;
   height: 100%;
@@ -17,7 +14,7 @@ html, body {
 }
 
 /* =====================
-   INTRO
+   INTRO / GIFT
 ===================== */
 .intro {
   position: fixed;
@@ -59,7 +56,6 @@ html, body {
   transition: transform 0.4s ease;
   z-index: 2;
 }
-
 .lid.pop {
   transform: translateY(-14px) rotateX(12deg);
 }
@@ -115,7 +111,7 @@ html, body {
 }
 
 /* =====================
-   SCENE
+   SCENE (IMAGE)
 ===================== */
 .scene {
   position: fixed;
@@ -152,9 +148,8 @@ html, body {
   transition: opacity 1.5s ease;
   text-shadow: 0 8px 22px rgba(0,0,0,0.6);
 }
-.line.show {
-  opacity: 1;
-}
+.line.show { opacity: 1; }
+.line.hide { opacity: 0; }
 
 /* =====================
    SNOW
@@ -176,9 +171,7 @@ html, body {
   animation: fall linear infinite;
 }
 @keyframes fall {
-  to {
-    transform: translateY(110vh);
-  }
+  to { transform: translateY(110vh); }
 }
 
 /* =====================
@@ -214,13 +207,6 @@ html, body {
   background: none;
   font-size: 1.3rem;
   color: #8A9E8E;
-}
-
-/* =====================
-   HIDDEN
-===================== */
-.hidden {
-  display: none;
 }
 </style>
 </head>
@@ -264,6 +250,10 @@ const lid = document.getElementById("lid");
 const intro = document.getElementById("intro");
 const scene = document.getElementById("scene");
 
+const line1 = document.getElementById("line1");
+const line2 = document.getElementById("line2");
+const line3 = document.getElementById("line3");
+
 gift.onclick = () => {
   lid.classList.add("pop");
 
@@ -274,20 +264,25 @@ gift.onclick = () => {
 
   setTimeout(() => {
     intro.remove();
-    document.getElementById("line1").classList.add("show");
+    line1.classList.add("show");
   }, 3000);
 
   setTimeout(() => {
-    document.getElementById("line2").classList.add("show");
+    line1.classList.remove("show");
+    line1.classList.add("hide");
+    line2.classList.add("show");
   }, 5500);
 
   setTimeout(() => {
-    document.getElementById("line3").classList.add("show");
+    line2.classList.remove("show");
+    line2.classList.add("hide");
+    line3.classList.add("show");
   }, 8000);
 
   setTimeout(() => {
+    line3.classList.remove("show");
     document.getElementById("giftTag").classList.add("show");
-  }, 11500);
+  }, 10500);
 
   createSnow();
 };

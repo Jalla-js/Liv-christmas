@@ -278,7 +278,8 @@ let velocity = 0;
 let lastX = 0;
 let isTouching = false;
 
-const MIN_X = -1100;
+const TOTAL_PANELS = 11;
+const MIN_X = -(TOTAL_PANELS - 1) * 100;
 const MAX_X = 0;
 
 const FRICTION = 0.94;

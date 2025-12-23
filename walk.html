@@ -26,11 +26,11 @@ html, body {
 .world {
   position: absolute;
   height: 100%;
-  width: 1200vw; /* long timeline */
+  width: 1200vw;
   display: flex;
-  transition: transform 0.25s ease-out;
 }
 
+/* Panels */
 .panel {
   width: 100vw;
   height: 100%;
@@ -40,7 +40,7 @@ html, body {
 /* Moments */
 .moment {
   position: absolute;
-  max-width: 240px;
+  max-width: 260px;
   padding: 14px 18px;
   background: rgba(255,255,255,0.92);
   border-radius: 14px;
@@ -48,6 +48,21 @@ html, body {
   font-size: 1rem;
   line-height: 1.4;
   box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Scroll hint */
+.scroll-hint {
+  position: fixed;
+  bottom: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.7);
+  transition: opacity 1.2s ease;
+}
+.scroll-hint.hide {
+  opacity: 0;
 }
 
 /* =====================
@@ -96,7 +111,7 @@ html, body {
   100% { transform: scale(1.15) translate(0,0); }
 }
 
-/* Text */
+/* Text lines */
 .line {
   position: fixed;
   bottom: 20%;
@@ -123,6 +138,38 @@ html, body {
 @keyframes fall {
   to { transform: translateY(110vh); }
 }
+
+/* Gift tag */
+.gift-tag {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  background: #F6F3EE;
+  color: #4F6653;
+  padding: 28px 26px 32px;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.4s ease, transform 1.4s ease;
+  text-align: center;
+  max-width: 280px;
+}
+.gift-tag.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+.close-tag {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  border: none;
+  background: none;
+  font-size: 1.3rem;
+  color: #8A9E8E;
+}
 </style>
 </head>
 
@@ -132,77 +179,66 @@ html, body {
 <div class="walk" id="walk">
   <div class="world" id="world">
 
-    <!-- March -->
     <div class="panel">
-      <div class="moment" style="top:40%; left:20%;">
+      <div class="moment" style="top:40%;left:20%;">
         That night in March when everything quietly changed.
       </div>
     </div>
 
-    <!-- April -->
     <div class="panel">
-      <div class="moment" style="top:50%; left:60%;">
+      <div class="moment" style="top:50%;left:55%;">
         Getting used to being “us”.
       </div>
     </div>
 
-    <!-- May -->
     <div class="panel">
-      <div class="moment" style="top:45%; left:30%;">
+      <div class="moment" style="top:45%;left:30%;">
         Realising I felt calmer when you were around.
       </div>
     </div>
 
-    <!-- June -->
     <div class="panel">
-      <div class="moment" style="top:55%; left:55%;">
+      <div class="moment" style="top:55%;left:55%;">
         Summer starting — and you already felt like home.
       </div>
     </div>
 
-    <!-- July -->
     <div class="panel">
-      <div class="moment" style="top:42%; left:25%;">
+      <div class="moment" style="top:42%;left:25%;">
         Laughing without thinking. Just being.
       </div>
     </div>
 
-    <!-- August -->
     <div class="panel">
-      <div class="moment" style="top:52%; left:60%;">
+      <div class="moment" style="top:52%;left:60%;">
         Missing you even when you were only a little way away.
       </div>
     </div>
 
-    <!-- September -->
     <div class="panel">
-      <div class="moment" style="top:46%; left:35%;">
+      <div class="moment" style="top:46%;left:35%;">
         Noticing how naturally you fit into my life.
       </div>
     </div>
 
-    <!-- October -->
     <div class="panel">
-      <div class="moment" style="top:54%; left:55%;">
+      <div class="moment" style="top:54%;left:55%;">
         Cold evenings, warm company.
       </div>
     </div>
 
-    <!-- November -->
     <div class="panel">
-      <div class="moment" style="top:48%; left:40%;">
+      <div class="moment" style="top:48%;left:40%;">
         Knowing this wasn’t just a season.
       </div>
     </div>
 
-    <!-- December -->
     <div class="panel">
-      <div class="moment" style="top:45%; left:30%;">
+      <div class="moment" style="top:45%;left:30%;">
         Wishing you were here this Christmas.
       </div>
     </div>
 
-    <!-- Gift -->
     <div class="panel">
       <div class="end-gift" id="endGift">
         For you
@@ -210,6 +246,8 @@ html, body {
     </div>
 
   </div>
+
+  <div class="scroll-hint" id="scrollHint">← scroll</div>
 </div>
 
 <!-- FINAL -->
@@ -218,26 +256,40 @@ html, body {
   <div class="line" id="l1">I didn’t realise how much I’d miss you.</div>
   <div class="line" id="l2">Until we weren’t together.</div>
   <div class="line" id="l3">I keep wishing you were here.</div>
+
+  <div class="gift-tag" id="giftTag">
+    <button class="close-tag" id="closeTag">×</button>
+    <p>
+      Merry Christmas, darling<br>
+      <strong>I love you</strong>
+    </p>
+  </div>
 </div>
 
 <script>
+/* =====================
+   WALK PHYSICS
+===================== */
+const world = document.getElementById("world");
+const scrollHint = document.getElementById("scrollHint");
 
-
-  const world = document.getElementById("world");
-
-let position = 0;        // current position (vw)
-let velocity = 0;        // movement speed
+let position = 0;
+let velocity = 0;
 let lastX = 0;
 let isTouching = false;
 
-const MIN_X = -1100;     // left bound (adjust if you add panels)
-const MAX_X = 0;         // right bound
-const FRICTION = 0.92;   // how quickly it slows (closer to 1 = longer glide)
+const MIN_X = -1100;
+const MAX_X = 0;
+
+const FRICTION = 0.94;
+const AUTO_DRIFT = -0.015;
+const MAX_SPEED = 3.0;
 
 document.addEventListener("touchstart", e => {
   isTouching = true;
   lastX = e.touches[0].clientX;
   velocity = 0;
+  scrollHint.classList.add("hide");
 });
 
 document.addEventListener("touchmove", e => {
@@ -246,7 +298,8 @@ document.addEventListener("touchmove", e => {
   const currentX = e.touches[0].clientX;
   const dx = currentX - lastX;
 
-  velocity = dx * 0.06;          // walking sensitivity
+  velocity = dx * 0.085;
+  velocity = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, velocity));
   position += velocity;
 
   lastX = currentX;
@@ -256,13 +309,13 @@ document.addEventListener("touchend", () => {
   isTouching = false;
 });
 
-function animate() {
+function animateWalk() {
   if (!isTouching) {
-    position += velocity;
+    velocity += AUTO_DRIFT;
     velocity *= FRICTION;
+    position += velocity;
   }
 
-  // Soft bounds
   if (position > MAX_X) {
     position += (MAX_X - position) * 0.08;
     velocity = 0;
@@ -273,12 +326,14 @@ function animate() {
   }
 
   world.style.transform = `translateX(${position}vw)`;
-  requestAnimationFrame(animate);
+  requestAnimationFrame(animateWalk);
 }
 
-animate();
+animateWalk();
 
-/* Gift open */
+/* =====================
+   GIFT OPEN
+===================== */
 document.getElementById("endGift").onclick = () => {
   document.getElementById("walk").style.display = "none";
   document.getElementById("final").style.display = "block";
@@ -288,13 +343,18 @@ document.getElementById("endGift").onclick = () => {
   setTimeout(() => document.getElementById("l2").classList.add("show"), 4600);
   setTimeout(() => document.getElementById("l2").classList.remove("show"), 7600);
   setTimeout(() => document.getElementById("l3").classList.add("show"), 8000);
+  setTimeout(() => document.getElementById("giftTag").classList.add("show"), 10500);
 
-  for (let i=0;i<40;i++){
-    const s=document.createElement("span");
-    s.style.left=Math.random()*100+"vw";
-    s.style.animationDuration=8+Math.random()*10+"s";
+  for (let i = 0; i < 40; i++) {
+    const s = document.createElement("span");
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.animationDuration = 8 + Math.random() * 10 + "s";
     document.body.appendChild(s);
   }
+};
+
+document.getElementById("closeTag").onclick = () => {
+  document.getElementById("giftTag").classList.remove("show");
 };
 </script>
 
